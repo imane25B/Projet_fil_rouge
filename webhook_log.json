@@ -1,0 +1,18 @@
+[
+  {
+    "timestamp": "2025-05-07 23:51:25",
+    "personnage": {
+      "nom": "Naruto",
+      "score": 85,
+      "niveau": "Épique"
+    }
+  },
+  {
+    "timestamp": "2025-05-07 23:59:08",
+    "personnage": {
+      "nom": "Vegeta",
+      "score": 88,
+      "niveau": "Épique"
+    }
+  }
+]

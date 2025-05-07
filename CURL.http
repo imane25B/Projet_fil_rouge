@@ -1,0 +1,8 @@
+POST http://localhost:8000/webhook/personnage
+Content-Type: application/json
+token: mytoken123
+
+{
+  "nom": "Naruto",
+  "score": 85
+}

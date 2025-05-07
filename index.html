@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorateur de Héros de Science-Fiction</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .results {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        li:last-child {
+            border-bottom: none;
+        }
+        .hero-name {
+            font-weight: bold;
+        }
+        .hero-saga {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        .error {
+            color: #e74c3c;
+            padding: 10px;
+            background-color: #fadbd8;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .success {
+            color: #27ae60;
+            padding: 10px;
+            background-color: #d4efdf;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Explorateur de Héros de Science-Fiction</h1>
+    
+    <div class="form-container">
+        <div class="form-group">
+            <label for="token">Token d'API:</label>
+            <input type="text" id="token" placeholder="Entrez votre token d'API" value="mytoken123">
+        </div>
+        
+        <div class="form-group">
+            <label for="nom">Filtrer par nom (optionnel):</label>
+            <input type="text" id="nom" placeholder="Entrez un nom de héros">
+        </div>
+        
+        <button id="chargerBtn">Charger les héros</button>
+        <button id="exempleBtn">Charger exemples</button>
+        <div id="message"></div>
+    </div>
+    
+    <div class="results">
+        <h2>Liste des héros</h2>
+        <ul id="listeHeros"></ul>
+    </div>
+
+    <script>
+        // URL de base de l'API
+        const API_URL = 'http://localhost:8000';
+        
+        // Fonction pour afficher un message
+        function afficherMessage(texte, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = texte;
+            messageDiv.className = type;
+            setTimeout(() => {
+                messageDiv.textContent = '';
+                messageDiv.className = '';
+            }, 5000);
+        }
+        
+        // Fonction pour charger les héros
+        async function chargerHeros() {
+            const token = document.getElementById('token').value;
+            const nom = document.getElementById('nom').value;
+            
+            if (!token) {
+                afficherMessage('Veuillez entrer un token d\'API', 'error');
+                return;
+            }
+            
+            // Construction de l'URL avec le paramètre de filtre si nécessaire
+            let url = `${API_URL}/heros`;
+            if (nom) {
+                // Dans cette implémentation, nous filtrerons côté client
+                // car l'API ne supporte pas directement le filtrage par nom
+            }
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'token': token
+                    }
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Erreur lors de la récupération des héros');
+                }
+                
+                let heros = await response.json();
+                
+                // Filtrage côté client si un nom est spécifié
+                if (nom) {
+                    heros = heros.filter(hero => 
+                        hero.nom.toLowerCase().includes(nom.toLowerCase()));
+                }
+                
+                afficherHeros(heros);
+                afficherMessage(`${heros.length} héros trouvés`, 'success');
+                
+            } catch (error) {
+                afficherMessage(`Erreur: ${error.message}`, 'error');
+                document.getElementById('listeHeros').innerHTML = '';
+            }
+        }
+        
+        // Fonction pour charger les exemples de héros
+        async function chargerExemples() {
+            const token = document.getElementById('token').value;
+            
+            if (!token) {
+                afficherMessage('Veuillez entrer un token d\'API', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/heros/exemples`, {
+                    method: 'GET',
+                    headers: {
+                        'token': token
+                    }
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Erreur lors de la récupération des exemples');
+                }
+                
+                const heros = await response.json();
+                afficherHeros(heros);
+                afficherMessage('Exemples de héros chargés', 'success');
+                
+            } catch (error) {
+                afficherMessage(`Erreur: ${error.message}`, 'error');
+                document.getElementById('listeHeros').innerHTML = '';
+            }
+        }
+        
+        // Fonction pour afficher les héros dans la liste HTML
+        function afficherHeros(heros) {
+            const listeElement = document.getElementById('listeHeros');
+            listeElement.innerHTML = '';
+            
+            if (heros.length === 0) {
+                listeElement.innerHTML = '<li>Aucun héros trouvé</li>';
+                return;
+            }
+            
+            heros.forEach(hero => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span class="hero-name">${hero.nom}</span> - <span class="hero-saga">${hero.saga}</span>`;
+                listeElement.appendChild(li);
+            });
+        }
+        
+        // Ajout des écouteurs d'événements
+        document.getElementById('chargerBtn').addEventListener('click', chargerHeros);
+        document.getElementById('exempleBtn').addEventListener('click', chargerExemples);
+        document.getElementById('nom').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                chargerHeros();
+            }
+        });
+    </script>
+</body>
+</html>

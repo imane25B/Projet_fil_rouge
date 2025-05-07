@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Héros SF</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 8px; text-align: left; }
+    </style>
+</head>
+<body>
+    <h1>Gestion des Héros Science-Fiction</h1>
+    <button onclick="listerHeros()">Lister les héros</button>
+    <h2>Héros Disponibles</h2>
+    <table id="table-heros">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Saga</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <script>
+        const API_URL = "/api/heros";
+
+        async function listerHeros() {
+            const response = await fetch(API_URL);
+            const heros = await response.json();
+            const tbody = document.querySelector("#table-heros tbody");
+            tbody.innerHTML = "";
+            heros.forEach(hero => {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td>${hero.nom}</td><td>${hero.saga}</td>`;
+                tbody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>

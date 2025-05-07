@@ -1,0 +1,26 @@
+[
+  {
+    "nom": "Shikamaru",
+    "score": 82,
+    "niveau": "Expert",
+    "score_double": 164
+  },
+  {
+    "nom": "Hinata",
+    "score": 65,
+    "niveau": "Intermédiaire",
+    "score_double": 130
+  },
+  {
+    "nom": "Naruto",
+    "score": 95,
+    "niveau": "Légendaire",
+    "score_double": 190
+  },
+  {
+    "nom": "Sasuke",
+    "score": 88,
+    "niveau": "Expert",
+    "score_double": 176
+  }
+]
